@@ -7,8 +7,8 @@ ui = fluidPage(
             tabsetPanel(
                 tabPanel("DATASET",
                     selectInput("dataset",
-                                "Dataset:", 
-                                c("Users", "Pressure")
+                                "Dataset:",
+                                ""
                     ),
                     fluidRow(
                         column(4,
@@ -34,9 +34,10 @@ ui = fluidPage(
                         max = 100, 
                         value = c(0, 20)
                     ),
-                    textInput(inputId = "txt_search",
-                        label = "Search"
+                    textInput("txt_search",
+                        "Search"
                     ),
+                    textOutput("txt_result")
                 ),
                 tabPanel("WORKING",
                     radioButtons("dist",
@@ -59,11 +60,13 @@ ui = fluidPage(
         mainPanel(
             width = 8,
             tabsetPanel(
+                tabPanel("Table",
+                    dataTableOutput('table')
+                ),
                 tabPanel("Plot",
                     plotOutput("plot")
                 ),
-                tabPanel("Summary"),
-                tabPanel("Table")
+                tabPanel("Summary")
             )
         )
     )
