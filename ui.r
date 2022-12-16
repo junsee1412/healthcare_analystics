@@ -1,43 +1,31 @@
 ui = fluidPage(
     theme = shinytheme("sandstone"),
-    titlePanel("Nah"),
+    titlePanel("Healthcare Analystics"),
     sidebarLayout(
         sidebarPanel(
             width = 4,
             tabsetPanel(
                 tabPanel("DATASET",
-                    selectInput("dataset",
-                                "Dataset:",
-                                ""
-                    ),
-                    fluidRow(
-                        column(4,
-                            checkboxGroupInput("cb_CleanOption",
-                                "Clean data:",
-                                choices = list("N/A" = 1,
-                                                "Type" = 2
-                                                )
-                            )
-                        ),
-                        column(4,
-                            radioButtons("rd_sort",
-                                "Sort:",
-                                c("None" = "none",
-                                    "A-Z" = "a-z",
-                                    "Z-A" = "z-a")
-                            )
-                        )
-                    ),
-                    sliderInput("sd_DataZise",
-                        "Data Size:", 
-                        min = 0, 
-                        max = 100, 
-                        value = c(0, 20)
-                    ),
-                    textInput("txt_search",
-                        "Search"
-                    ),
-                    textOutput("txt_result")
+                    # selectInput("dataset",
+                    #             "Dataset:",
+                    #             ""
+                    # ),
+                    checkboxGroupInput("cb_CleanOption",
+                        "Clean data:",
+                        choices = list("N/A" = 1,
+                                        "Type" = 2
+                                        )
+                    )
+                    # ,
+                    # sliderInput("sd_DataZise",
+                    #     "Data Size:", 
+                    #     min = 0, 
+                    #     max = 100, 
+                    #     value = c(0, 20)
+                    # ),
+                    # textInput("txt_search",
+                    #     "Search"
+                    # )
                 ),
                 tabPanel("WORKING",
                     radioButtons("dist",
@@ -64,7 +52,7 @@ ui = fluidPage(
                     dataTableOutput('table')
                 ),
                 tabPanel("Plot",
-                    plotOutput("plot")
+                    plotlyOutput("plot")
                 ),
                 tabPanel("Summary")
             )
