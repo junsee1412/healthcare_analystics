@@ -1,23 +1,27 @@
+d = read.csv("dataset/heart_statlog.csv")
+
 source("server.d/sidebar.dataset.r")
 source("server.d/sidebar.working.r")
 
+source("server.d/main.table.r")
+source("server.d/main.plot.r")
+source("server.d/main.summary.r")
 
 server = function(input, output, session) {
-    observe({
-        updateSelectInput(session,
-            "dataset",
-            choices = datasets,
-            selected = datasets[1]
-        )
-    })
-    output$result = renderText({
-        paste(url, sep="/", input$dataset)
+    output$result = renderPrint({
+        paste(url, sep = "/", input$dataset)
     })
     output$table = renderDataTable(
-        read.csv(paste(url, sep="/", input$dataset))
+        data.frame(d),
+        options = list(
+            searching = FALSE,
+            scrollX=TRUE
+        )
     )
-    output$plot <- renderPlot({
-        
+    output$plot = renderPlotly({
+        # cor = cor(matrix(rnorm(100), ncol = 10))
+        corr = round(cor(d), 1)
+        ggplotly(ggcorrplot(corr, hc.order = TRUE, type = "lower", lab = TRUE))
     })
 
 }
