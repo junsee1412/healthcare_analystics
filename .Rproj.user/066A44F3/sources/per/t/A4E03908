@@ -1,0 +1,27 @@
+{
+    "id": "A4E03908",
+    "path": "D:/Workspace/R/healthcare_analystics/ui.r",
+    "project_path": "ui.r",
+    "type": "r_source",
+    "hash": "746854159",
+    "contents": "",
+    "dirty": false,
+    "created": 1671635008638.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "59,44",
+        "scrollLine": "44",
+        "docOutlineVisible": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1671645297,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1671645297509,
+    "read_only": false,
+    "read_only_alternatives": []
+}
