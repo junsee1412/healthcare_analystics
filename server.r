@@ -1,20 +1,19 @@
-d = read.csv("dataset/heart_statlog.csv")
+d = read.csv("dataset/heart_statlog.data.csv")
 
-source("server.d/sidebar.dataset.r")
-source("server.d/sidebar.working.r")
-
-source("server.d/main.table.r")
-source("server.d/main.plot.r")
-source("server.d/main.summary.r")
 
 server = function(input, output, session) {
+    
+    data_temp = data.frame(d)
+    
+    updateCheckboxGroupInput(session, inputId = "field", choices = names(data_temp),selected = names(data_temp))
     output$result = renderPrint({
         paste(url, sep = "/", input$dataset)
     })
+    
     output$table = renderDataTable(
-        data.frame(d),
+        data_temp[, input$field , drop = FALSE],
         options = list(
-            searching = FALSE,
+            searching = TRUE,
             scrollX=TRUE
         )
     )
@@ -23,5 +22,6 @@ server = function(input, output, session) {
         corr = round(cor(d), 1)
         ggplotly(ggcorrplot(corr, hc.order = TRUE, type = "lower", lab = TRUE))
     })
+    output$summary = renderPrint(summary(data_temp))
 
 }

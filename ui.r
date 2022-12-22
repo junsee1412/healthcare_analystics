@@ -15,7 +15,14 @@ ui = fluidPage(
                         choices = list("N/A" = 1,
                                         "Type" = 2
                                         )
-                    )
+                    ),
+                    checkboxGroupInput("field",
+                                       "Column data:",
+                                       choices = list("age" = 1,
+                                                      "sex" = 2
+                                       )
+                    ),
+                    
                     # ,
                     # sliderInput("sd_DataZise",
                     #     "Data Size:", 
@@ -48,13 +55,14 @@ ui = fluidPage(
         mainPanel(
             width = 8,
             tabsetPanel(
+                id = 'dataset',
                 tabPanel("Table",
                     dataTableOutput('table')
                 ),
                 tabPanel("Plot",
                     plotlyOutput("plot")
                 ),
-                tabPanel("Summary")
+                tabPanel("Summary", verbatimTextOutput("summary")),
             )
         )
     )
