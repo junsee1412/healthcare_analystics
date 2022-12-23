@@ -6,7 +6,8 @@ ui <- dashboardPage(
   dashboardSidebar(
     sidebarMenu(
       menuItem("Dashboard", tabName = "dashboard", icon = icon("home")),
-      menuItem("Charts", tabName = "charts", icon = icon("chart-simple"))
+      menuItem("Charts", tabName = "charts", icon = icon("chart-simple")),
+      menuItem("About", tabName = "about", icon = icon("circle-info"))
     )
   ),
   
@@ -25,7 +26,7 @@ ui <- dashboardPage(
                     width = 4,
                     tabsetPanel(
                       tabPanel("DATASET",
-                               checkboxGroupInput("cb_CleanOption",
+                               checkboxGroupInput("cb_clean",
                                                   "Clean data:",
                                                   choices = list("N/A" = 1,
                                                                  "Type" = 2
@@ -54,7 +55,8 @@ ui <- dashboardPage(
                                ),
                       )
                     ),
-                    verbatimTextOutput("result")
+                    verbatimTextOutput("result"),
+                    verbatimTextOutput("Test"),
                   ),
                   mainPanel(
                     width = 8,
@@ -67,6 +69,9 @@ ui <- dashboardPage(
                                plotlyOutput("plot")
                       ),
                       tabPanel("Summary", verbatimTextOutput("summary")),
+                      tabPanel("TestTable",
+                               dataTableOutput('test_table')
+                      ),
                     )
                   )
                 )
@@ -78,6 +83,14 @@ ui <- dashboardPage(
       # Second tab content
       tabItem(tabName = "charts",
               h2("Charts tab content"),
+              plotOutput("plot1", height = 600),
+              
+              htmlOutput("table_hd")
+              
+      ),
+      tabItem(tabName = "about",
+              includeMarkdown("README.MD")
+              
       )
     )
   )
