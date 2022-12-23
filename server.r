@@ -105,11 +105,11 @@ server = function(input, output, session) {
     
     #----------------------------- Bieu do ---------------------------------
     #Visualize with bar plot
-    chart <- hd_long_fact_tbl %>% 
+    chart_longfact <- hd_long_fact_tbl %>% 
       ggplot(aes(value)) +
       geom_bar(aes(x        = value, 
                    fill     = Diagnosis_Heart_Disease), 
-               alpha    = .6, 
+               alpha    = .4, 
                position = "dodge", 
                color    = "black",
                width    = .8
@@ -120,7 +120,7 @@ server = function(input, output, session) {
       theme(
         axis.text.y  = element_blank(),
         axis.ticks.y = element_blank()) +
-      facet_wrap(~ name, scales = "free", nrow = 4) +
+      facet_wrap(~ name, scales = "free", nrow = 8, ncol = 2) +
       scale_fill_manual(
         values = c("#fde725ff", "#20a486ff"),
         name   = "Heart\nDisease",
@@ -141,7 +141,7 @@ server = function(input, output, session) {
              -Diagnosis_Heart_Disease)
     
     #Visualize numeric variables as boxplots
-    hd_long_cont_tbl %>% 
+    boxplot_numeric = hd_long_cont_tbl %>% 
       ggplot(aes(y = value)) +
       geom_boxplot(aes(fill = Diagnosis_Heart_Disease),
                    alpha  = .6,
@@ -158,12 +158,12 @@ server = function(input, output, session) {
         axis.ticks.x = element_blank()) +
       facet_wrap(~ key, 
                  scales = "free", 
-                 ncol   = 2) 
+                 ncol   = 3) 
     
 
-    sapply(heart_dataset_clean_tbl, class)
+    #sapply(heart_dataset_clean_tbl, class)
     #Correlation matrix using Pearson method, default method is Pearson
-    heart_dataset_clean_tbl %>%
+    matrix_pearson = heart_dataset_clean_tbl %>%
       mutate_at(c("Resting_ECG", 
                   "Fasting_Blood_Sugar", 
                   "Sex", 
@@ -185,7 +185,7 @@ server = function(input, output, session) {
     
     
     #Correlation matrix using Kendall method
-    heart_dataset_clean_tbl %>% 
+    matrix_kendall = heart_dataset_clean_tbl %>% 
       mutate_at(c("Resting_ECG", 
                   "Fasting_Blood_Sugar", 
                   "Sex", 
@@ -209,7 +209,6 @@ server = function(input, output, session) {
     
     
     # -------------------- Xay Dung Mo Hinh ---------------------------------
-    
     #set seed for repeatability
     set.seed(1333)
     
@@ -244,11 +243,14 @@ server = function(input, output, session) {
       fit(Diagnosis_Heart_Disease ~ ., data = train_processed_data)
     
     #Take a look at model coefficients and add odds ratio for interpretability
-    tableHD = broom::tidy(log_regr_hd_model$fit) %>%
+    table_coefficients = broom::tidy(log_regr_hd_model$fit) %>%
       arrange(desc(estimate)) %>% 
       mutate(odds_ratio = exp(estimate)) %>%
-      kable(align = rep("c", 5), digits = 3)%>%kable_styling("full_width" = F)
-    tableHD
+      kable(align = rep("c", 5), digits = 3)%>%
+      kable_styling("full_width" = F, 
+                    latex_options = "basic", 
+                    wraptable_width = "1pt", 
+                    bootstrap_options = "bordered")
     
     
     # a = lm(Age ~ ., data = heart_dataset_clean_tbl)
@@ -288,10 +290,15 @@ server = function(input, output, session) {
                             `1` = "Heart Disease"))
     
     #Convert to kable format
-    conf_matrix_plt_obj%>% kable(align = rep("c", 4))%>%kable_styling("full_width" = F)
+    table_prediction = conf_matrix_plt_obj%>% 
+      kable(align = rep("c", 4))%>%
+      kable_styling("full_width" = F, 
+                    latex_options = "basic", 
+                    wraptable_width = "1pt", 
+                    bootstrap_options = "bordered")
     
     #Plot confusion matrix
-    p1 <- conf_matrix_plt_obj %>% ggplot(aes(x = Truth, y = Prediction)) +
+    confusion_matrix = conf_matrix_plt_obj %>% ggplot(aes(x = Truth, y = Prediction)) +
       geom_tile(aes(fill = n), alpha = .8) +
       geom_text(aes(label = n), color = "white") +
       scale_fill_viridis_c() +
@@ -300,9 +307,6 @@ server = function(input, output, session) {
         title    = "Confusion Matrix",
         subtitle = "Heart Disease Prediction Using Logistic Regression"
       )
-    
-    p1
-    
     
     #Calling summary() on the confusion_matrix_obj gives all the performance measures
     #Filter to the ones we care about
@@ -324,10 +328,14 @@ server = function(input, output, session) {
       kable(align = rep("c", 3))
     
     #Display perfomance summary as kable
-    log_reg_performance_tbl %>%kable_styling("full_width" = F)
+    perfomance_summary = log_reg_performance_tbl %>%
+      kable_styling("full_width" = F, 
+                    latex_options = "basic", 
+                    wraptable_width = "1pt", 
+                    bootstrap_options = "bordered")
+    
     
     #--------------------- Xay dung mo hinh du doan voi 10 mau thu ------------------
-    
     #create multiple split objects w/ vfold cross-validation resampling
     set.seed(925)
     hd_cv_split_objects <- heart_dataset_clean_tbl %>% vfold_cv(strata = Diagnosis_Heart_Disease)
@@ -365,7 +373,7 @@ server = function(input, output, session) {
                                   ~make_cv_predictions_fcn(split = .x, id = .y))
     
     #see results 
-    cv_predictions_tbl %>% head(10) %>% kable(align = rep("c", 3))%>%kable_styling("full_width" = F)
+    table_prediction10 = cv_predictions_tbl %>% head(10) %>% kable(align = rep("c", 3))%>%kable_styling("full_width" = F)
     
     
     #define desired metrics
@@ -382,10 +390,10 @@ server = function(input, output, session) {
       desired_metrics(truth = truth, estimate = prediction) 
     
     #see results
-    cv_metrics_long_tbl %>% head(10) %>% kable(align = rep("c", 4))%>%kable_styling("full_width" = F)
+    table_metrics_long = cv_metrics_long_tbl %>% head(10) %>% kable(align = rep("c", 4))%>%kable_styling("full_width" = F)
     
     #visualize results
-    cv_metrics_long_tbl %>% ggplot(aes(x = .metric, y = .estimate)) +
+    plot_metrics = cv_metrics_long_tbl %>% ggplot(aes(x = .metric, y = .estimate)) +
       geom_boxplot(aes(fill = .metric), 
                    alpha = .6, 
                    fatten = .7) +
@@ -398,8 +406,9 @@ server = function(input, output, session) {
       scale_y_continuous(labels = scales::percent_format(accuracy = 1) ) +
       theme(legend.title = element_blank(),
             axis.text.x  = element_blank(),
-            axis.ticks.x = element_blank()) 
-    #-------------- Gia tri du doan trung binh --------------------
+            axis.ticks.x = element_blank())
+    
+    #Gia tri du doan trung binh 
     
     #calculate the mean from all the folds for each metric
     cv_mean_metrics_tbl <- cv_metrics_long_tbl %>%
@@ -416,17 +425,45 @@ server = function(input, output, session) {
     
     #---------------------------- Handle output data ---------------------
     
-    output$table_hd = renderText({tableHD})
+    output$boxPlotNumeric = renderPlot({boxplot_numeric})
+    output$longFact = renderPlot({chart_longfact})
+    output$matrixPearson = renderPlot({matrix_pearson})
+    output$matrixKendall = renderPlot({matrix_kendall})
+    output$matrixConfusion = renderPlot({confusion_matrix})
+    output$boxPlot10 = renderPlot({plot_metrics})
     
-    observeEvent(input$cb_clean, {
-      if(input$cb_clean == 1) {
-        output$Test = renderText("Test")
+    output$tableCoefficients = renderText({table_coefficients})
+    output$tablePrediction = renderText({table_prediction})
+    output$perfomanceSummary = renderText({perfomance_summary})
+    output$tableMetrics = renderText({table_metrics_long})
+    
+    output$tablePredict = renderDataTable(
+      first_training_prediction_full_tbl, 
+      options = list(
+            searching = TRUE,
+            scrollX=TRUE
+      )
+    )
+    
+    observeEvent(input$checkNa, {
+      if(input$checkNa == TRUE) {
+        output$table = renderDataTable(
+          heart_dataset_clean_tbl[, input$field , drop = FALSE],
+          options = list(
+            searching = TRUE,
+            scrollX=TRUE
+          )
+        )
+      } else if(input$checkNa == FALSE) {
+        output$table = renderDataTable(
+          heart_disease_dataset[, input$field , drop = FALSE],
+          options = list(
+            searching = TRUE,
+            scrollX=TRUE
+          )
+        )
       }
-    })
-    
-    updateCheckboxGroupInput(session, inputId = "field", choices = names(heart_disease_dataset),selected = names(heart_disease_dataset))
-    output$result = renderPrint({
-      paste(url, sep = "/", input$dataset)
+     
     })
     
     output$table = renderDataTable(
@@ -436,6 +473,12 @@ server = function(input, output, session) {
         scrollX=TRUE
       )
     )
+    
+    updateCheckboxGroupInput(session, inputId = "field", choices = names(heart_disease_dataset),selected = names(heart_disease_dataset))
+    output$result = renderPrint({
+      paste(url, sep = "/", input$dataset)
+    })
+    
     output$plot = renderPlotly({
       # cor = cor(matrix(rnorm(100), ncol = 10))
       corr = round(cor(d), 1)
