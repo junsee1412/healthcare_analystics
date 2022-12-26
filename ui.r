@@ -41,22 +41,23 @@ ui <- dashboardPage(
                                                                  "sex" = 2
                                                   )
                                ),
-                      ),
-                      tabPanel("WORKING",
-                               radioButtons("dist",
-                                            "Distribution type:",
-                                            c("Normal" = "norm",
-                                              "Uniform" = "unif",
-                                              "Log-normal" = "l-norm",
-                                              "Exponential" = "exp")
-                               ),
-                               sliderInput(inputId = "bins", 
-                                           label = "Number of bins:",
-                                           min = 1,
-                                           max = 100,
-                                           value = sample(1:100, 1)
-                               ),
                       )
+                      # ,
+                      # tabPanel("WORKING",
+                      #          radioButtons("dist",
+                      #                       "Distribution type:",
+                      #                       c("Normal" = "norm",
+                      #                         "Uniform" = "unif",
+                      #                         "Log-normal" = "l-norm",
+                      #                         "Exponential" = "exp")
+                      #          ),
+                      #          sliderInput(inputId = "bins", 
+                      #                      label = "Number of bins:",
+                      #                      min = 1,
+                      #                      max = 100,
+                      #                      value = sample(1:100, 1)
+                      #          ),
+                      # )
                     ),
                     verbatimTextOutput("result"),
                   ),
@@ -90,7 +91,7 @@ ui <- dashboardPage(
                          h5("Select categorical vars, recode them to their character values, convert to long format"),
                          fluidRow(
                            column(width = 12,
-                                  plotOutput("longFact", height = 1500)
+                                  plotlyOutput("longFact", height = 1500)
                            ),
                          )
                 ),
@@ -98,7 +99,7 @@ ui <- dashboardPage(
                          h5("BoxPlots for evaluating the numeric variables"),
                          fluidRow(
                            column(width = 12,
-                                  plotOutput("boxPlotNumeric", height = 1000)
+                                  plotlyOutput("boxPlotNumeric", height = 1000)
                            ),
                          )
                 ),
@@ -111,9 +112,13 @@ ui <- dashboardPage(
                            column(width = 6,
                                   plotOutput("matrixPearson", height = 600)
                            ),
-                         )
+                         ),
+                         plotlyOutput("matrixKendall_1", height = 600),
+                         plotlyOutput("matrixPearson_1", height = 600)
                 ),
-                tabPanel("Orthers"),
+                tabPanel("Orthers",
+                        
+                ),
               ),
       ),
       tabItem(tabName = "predict",
@@ -143,7 +148,7 @@ ui <- dashboardPage(
                          )
                   ),
                   column(width = 6,
-                         plotOutput("matrixConfusion", height = 600)
+                         plotlyOutput("matrixConfusion", height = 600)
                   ),
                 ),
               ),
@@ -156,7 +161,7 @@ ui <- dashboardPage(
                        ),
                 ),
                 column(width = 6,
-                       plotOutput("boxPlot10", height = 600)
+                       plotlyOutput("boxPlot10", height = 600)
                 ),
               ),
       ),
