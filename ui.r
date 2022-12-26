@@ -125,7 +125,8 @@ ui <- dashboardPage(
               fluidPage(
                 h4("Look at model coefficients and odds ratio for interpretability"),
                 fluidRow(
-                  dataTableOutput("tablePredict", width = "100%", height = "auto")
+                  dataTableOutput("tablePredict",
+                    width = "100%", height = "auto")
                 ),
                 hr(),
                 fluidRow(
@@ -138,13 +139,12 @@ ui <- dashboardPage(
                 fluidRow(
                   column(width = 6,
                          box(width = 12,
-                             h5("Table show number of false positives and false negatives"),
-                             htmlOutput("tablePrediction", height = 300,),
+                          h5("Table show number of false positives and false negatives"),
+                          htmlOutput("tablePrediction", height = 300),
                          ),
                          box(width = 12,
                              h5("Table display perfomance summary as kable"),
                              htmlOutput("perfomanceSummary", height = 300)
-                             
                          )
                   ),
                   column(width = 6,
@@ -167,7 +167,6 @@ ui <- dashboardPage(
       ),
       tabItem(tabName = "about",
               includeMarkdown("README.MD")
-              
       )
     )
   )

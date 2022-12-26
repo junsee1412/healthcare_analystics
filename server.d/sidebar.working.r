@@ -100,16 +100,19 @@ confusion_matrix = conf_matrix_plt_obj %>%
 #Gọi summary() trên ma trận nhầm lẫn đưa ra tất cả các phép đo hiệu suất
 #Lọc những thứ quan tâm
 log_reg_performance_tbl <- summary(conf_mat_obj) %>% filter(
-    .metric == "accuracy" | 
+    .metric == "accuracy" |
     .metric == "sens" |
     .metric == "spec" |
     .metric == "ppv"  |
     .metric == "npv"  |
     .metric == "f_meas") %>%
     select(-.estimator) %>%
-    rename("metric" = .metric, 
-            "estimate" = .estimate) %>%
-    mutate("estimate" = estimate %>% signif(digits = 3)) %>%
+    rename("metric" = .metric,
+        "estimate" = .estimate
+    ) %>%
+    mutate("estimate" = estimate %>%
+        signif(digits = 3)
+    ) %>%
     mutate(metric = recode(metric, "sens" = "sensitivity"),
             metric = recode(metric, "spec" = "specificity"),
             metric = recode(metric, "ppv"  = "positive predictive value"),
@@ -136,8 +139,11 @@ make_cv_predictions_fcn <- function(split, id){
     #prep(train) công thức và trả lại công thức cập nhật
     #bake(apply) công thức được đào tạo cho dữ liệu mới
     analysis_tbl <- analysis(split)
-    trained_analysis_recipe <- prep(the_recipe ,training = analysis_tbl)
-    baked_analysis_data_tbl <- bake(trained_analysis_recipe, new_data = analysis_tbl)
+    trained_analysis_recipe <- prep(the_recipe, training = analysis_tbl)
+    baked_analysis_data_tbl <- bake(
+                                    trained_analysis_recipe,
+                                    new_data = analysis_tbl
+                                )
 
     #xác định mô hình trong cú pháp parsnip
     model <- logistic_reg(mode = "classification") %>%
@@ -147,14 +153,17 @@ make_cv_predictions_fcn <- function(split, id){
     #giống như trên nhưng đối với bộ đánh giá (giống như bộ kiểm tra nhưng đối với mẫu lại)
     assessment_tbl <- assessment(split)
     trained_assessment_recipe <- prep(the_recipe, training = assessment_tbl)
-    baked_assessment_data_tbl <- bake(trained_assessment_recipe, new_data = assessment_tbl)
+    baked_assessment_data_tbl <- bake(
+                                    trained_assessment_recipe,
+                                    new_data = assessment_tbl
+                                )
 
     #make a tibble with the results
     tibble(
         "id" = id,
         "truth" = baked_assessment_data_tbl$Diagnosis_Heart_Disease,
         "prediction" = unlist(
-            predict(model, 
+            predict(model,
                     new_data = baked_assessment_data_tbl
             )
         )
@@ -193,10 +202,10 @@ table_metrics_long = cv_metrics_long_tbl %>%
     kable_styling("full_width" = FALSE)
 
 #visualize results
-plot_metrics = cv_metrics_long_tbl %>% 
+plot_metrics = cv_metrics_long_tbl %>%
     ggplot(aes(x = .metric, y = .estimate)) +
     geom_boxplot(aes(fill = .metric),
-                alpha = .6, 
+                alpha = .6,
                 fatten = .7) +
     geom_jitter(alpha = 0.2, width = .05) +
     labs(x = "",
@@ -204,10 +213,11 @@ plot_metrics = cv_metrics_long_tbl %>%
         title = "Boxplots for Logistic Regression",
         subtitle = "Model Metrics, 10-Fold Cross Validation") +
     scale_fill_viridis_d() +
-    scale_y_continuous(labels = scales::percent_format(accuracy = 1) ) +
+    scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
     theme(legend.title = element_blank(),
         axis.text.x  = element_blank(),
-        axis.ticks.x = element_blank())
+        axis.ticks.x = element_blank()
+    )
 
 #Gia tri du doan trung binh
 
@@ -218,7 +228,9 @@ cv_mean_metrics_tbl <- cv_metrics_long_tbl %>%
     ungroup()
 
 cv_mean_metrics_tbl %>%
-    mutate(Average = Avg %>% signif(digits = 3)) %>%
+    mutate(Average = Avg %>%
+        signif(digits = 3)
+    ) %>%
     select(.metric, Average) %>%
     kable(align = rep("c", 2)) %>%
     kable_styling("full_width" = FALSE)

@@ -24,7 +24,7 @@ server = function(input, output, session) {
   output$tableMetrics = renderText({table_metrics_long})
 
   output$tablePredict = renderDataTable(
-    first_training_prediction_full_tbl, 
+    first_training_prediction_full_tbl,
     options = list(
           searching = TRUE,
           scrollX=TRUE
@@ -34,18 +34,18 @@ server = function(input, output, session) {
   observeEvent(input$checkNa, {
     if(input$checkNa == TRUE) {
       output$table = renderDataTable(
-        heart_dataset_clean_tbl[, input$field , drop = FALSE],
+        heart_dataset_clean_tbl[, input$field, drop = FALSE],
         options = list(
           searching = TRUE,
-          scrollX=TRUE
+          scrollX = TRUE
         )
       )
     } else if(input$checkNa == FALSE) {
       output$table = renderDataTable(
-        heart_disease_dataset[, input$field , drop = FALSE],
+        heart_disease_dataset[, input$field, drop = FALSE],
         options = list(
           searching = TRUE,
-          scrollX=TRUE
+          scrollX = TRUE
         )
       )
     }
@@ -53,23 +53,28 @@ server = function(input, output, session) {
   })
 
   output$table = renderDataTable(
-    heart_disease_dataset[, input$field , drop = FALSE],
+    heart_disease_dataset[, input$field, drop = FALSE],
     options = list(
       searching = TRUE,
-      scrollX=TRUE
+      scrollX = TRUE
     )
   )
 
-  updateCheckboxGroupInput(session, inputId = "field", choices = names(heart_disease_dataset),selected = names(heart_disease_dataset))
+  updateCheckboxGroupInput(session,
+    inputId = "field",
+    choices = names(heart_disease_dataset),
+    selected = names(heart_disease_dataset)
+  )
+
   output$result = renderPrint({
     paste(url, sep = "/", input$dataset)
   })
 
   output$plot = renderPlotly({
-    # cor = cor(matrix(rnorm(100), ncol = 10))
     corr = round(cor(d), 1)
     ggplotly(ggcorrplot(corr, hc.order = TRUE, type = "lower", lab = TRUE))
   })
+
   output$summary = renderPrint(summary(heart_disease_dataset))
 
   output$plot1 = renderPlot({chart})
